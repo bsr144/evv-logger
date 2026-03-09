@@ -34,7 +34,7 @@ func (sc *ScheduleController) Create(c *fiber.Ctx) error {
 	resp, err := sc.usecase.Create(c.Context(), &req)
 	if err != nil {
 		if errors.Is(err, pkgerrors.ErrValidation) {
-			return c.Status(fiber.StatusBadRequest).JSON(dto.ErrorResponse(err.Error()))
+			return c.Status(fiber.StatusBadRequest).JSON(dto.ErrorResponse("validation failed"))
 		}
 		return c.Status(fiber.StatusInternalServerError).JSON(dto.ErrorResponse("failed to create schedule"))
 	}
@@ -94,6 +94,10 @@ func (sc *ScheduleController) Update(c *fiber.Ctx) error {
 	var req schedule.UpdateScheduleRequest
 	if err := c.BodyParser(&req); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(dto.ErrorResponse("invalid request body"))
+	}
+
+	if err := sc.validate.Struct(&req); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(dto.ValidationErrorResponse(err))
 	}
 
 	resp, err := sc.usecase.Update(c.Context(), id, &req)

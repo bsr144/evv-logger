@@ -29,7 +29,7 @@ func ValidationErrorResponse(err error) APIResponse {
 
 	msgs := make([]string, 0, len(ve))
 	for _, fe := range ve {
-		msgs = append(msgs, fmt.Sprintf("%s failed on '%s'", fe.Field(), fe.Tag()))
+		msgs = append(msgs, fmt.Sprintf("'%s' failed on '%s'", strings.ToLower(fe.Field()), fe.Tag()))
 	}
 
 	return APIResponse{Success: false, Error: "validation failed: " + strings.Join(msgs, ", ")}

@@ -21,7 +21,7 @@ func (uc *taskUsecase) Create(ctx context.Context, scheduleID int, req *CreateTa
 	}
 
 	if _, err := uc.scheduleChecker.GetScheduleByID(ctx, scheduleID); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to verify schedule %d: %w", scheduleID, err)
 	}
 
 	now := time.Now()
@@ -43,7 +43,7 @@ func (uc *taskUsecase) Create(ctx context.Context, scheduleID int, req *CreateTa
 
 func (uc *taskUsecase) GetByScheduleID(ctx context.Context, scheduleID int) ([]*TaskResponse, error) {
 	if _, err := uc.scheduleChecker.GetScheduleByID(ctx, scheduleID); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to verify schedule %d: %w", scheduleID, err)
 	}
 
 	tasks, err := uc.taskRepo.GetTasksByScheduleID(ctx, scheduleID)
@@ -62,7 +62,7 @@ func (uc *taskUsecase) GetByScheduleID(ctx context.Context, scheduleID int) ([]*
 func (uc *taskUsecase) Update(ctx context.Context, scheduleID int, taskID int, req *UpdateTaskRequest) (*TaskResponse, error) {
 	existing, err := uc.taskRepo.GetTaskByID(ctx, taskID)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to get task %d: %w", taskID, err)
 	}
 
 	if existing.ScheduleID != scheduleID {

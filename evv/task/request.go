@@ -5,6 +5,6 @@ type CreateTaskRequest struct {
 }
 
 type UpdateTaskRequest struct {
-	Status *string `json:"status,omitempty"`
+	Status *string `json:"status,omitempty" validate:"omitempty,oneof=pending completed not_completed"`
 	Notes  *string `json:"notes,omitempty" validate:"omitempty,max=1000"`
 }
