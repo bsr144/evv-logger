@@ -7,6 +7,7 @@ type Usecase interface {
 	GetByID(ctx context.Context, id int) (*ScheduleDetailResponse, error)
 	GetAll(ctx context.Context, dateFilter string) (*ScheduleListResponse, error)
 	Update(ctx context.Context, id int, req *UpdateScheduleRequest) (*ScheduleResponse, error)
+	GetStats(ctx context.Context) (*StatsResponse, error)
 }
 
 type scheduleUsecase struct {

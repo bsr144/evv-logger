@@ -147,6 +147,20 @@ func (uc *scheduleUsecase) Update(ctx context.Context, id int, req *UpdateSchedu
 	return toScheduleResponse(updated), nil
 }
 
+func (uc *scheduleUsecase) GetStats(ctx context.Context) (*StatsResponse, error) {
+	result, err := uc.scheduleRepo.GetScheduleStats(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get schedule stats: %w", err)
+	}
+
+	return &StatsResponse{
+		Total:     result.Total,
+		Missed:    result.Missed,
+		Upcoming:  result.Upcoming,
+		Completed: result.Completed,
+	}, nil
+}
+
 func toScheduleResponse(s *entity.Schedule) *ScheduleResponse {
 	return &ScheduleResponse{
 		ID:            s.ID,

@@ -53,6 +53,15 @@ func (sc *ScheduleController) GetAll(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(dto.SuccessResponse(resp))
 }
 
+func (sc *ScheduleController) Stats(c *fiber.Ctx) error {
+	resp, err := sc.usecase.GetStats(c.Context())
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(dto.ErrorResponse("failed to get schedule stats"))
+	}
+
+	return c.Status(fiber.StatusOK).JSON(dto.SuccessResponse(resp))
+}
+
 func (sc *ScheduleController) GetByID(c *fiber.Ctx) error {
 	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
