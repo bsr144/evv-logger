@@ -29,8 +29,11 @@ func main() {
 	taskCtrl := controller.NewTaskController(taskUC)
 
 	app := fiber.New(fiber.Config{
-		AppName:   "EVV Logger",
-		BodyLimit: 64 * 1024,
+		AppName:      "EVV Logger",
+		BodyLimit:    64 * 1024,
+		ReadTimeout:  10 * time.Second,
+		WriteTimeout: 10 * time.Second,
+		IdleTimeout:  30 * time.Second,
 	})
 	app.Use(recover.New())
 	app.Use(middleware.CORS())
