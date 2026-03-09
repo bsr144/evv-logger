@@ -16,5 +16,11 @@ func (s *Store) CreateSchedule(_ context.Context, schedule *entity.Schedule) (*e
 	stored := deepCopySchedule(schedule)
 	s.schedules[stored.ID] = stored
 
+	s.statusCounts[stored.Status]++
+	if _, ok := s.dateStatusCounts[stored.Date]; !ok {
+		s.dateStatusCounts[stored.Date] = make(map[string]int)
+	}
+	s.dateStatusCounts[stored.Date][stored.Status]++
+
 	return deepCopySchedule(stored), nil
 }

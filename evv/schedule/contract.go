@@ -6,19 +6,12 @@ import (
 	"github.com/bsr144/evv-logger/entity"
 )
 
-type ScheduleStatsResult struct {
-	Total     int
-	Missed    int
-	Upcoming  int
-	Completed int
-}
-
 type ScheduleRepository interface {
 	CreateSchedule(ctx context.Context, schedule *entity.Schedule) (*entity.Schedule, error)
 	GetScheduleByID(ctx context.Context, id int) (*entity.Schedule, error)
 	GetAllSchedules(ctx context.Context) ([]*entity.Schedule, error)
 	UpdateSchedule(ctx context.Context, schedule *entity.Schedule) (*entity.Schedule, error)
-	GetScheduleStats(ctx context.Context) (*ScheduleStatsResult, error)
+	GetScheduleCounts(ctx context.Context, date string) (*entity.ScheduleCounts, error)
 }
 
 type TaskRepository interface {

@@ -50,12 +50,12 @@ func (m *mockScheduleRepo) UpdateSchedule(ctx context.Context, s *entity.Schedul
 	return args.Get(0).(*entity.Schedule), args.Error(1)
 }
 
-func (m *mockScheduleRepo) GetScheduleStats(ctx context.Context) (*schedule.ScheduleStatsResult, error) {
-	args := m.Called(ctx)
+func (m *mockScheduleRepo) GetScheduleCounts(ctx context.Context, date string) (*entity.ScheduleCounts, error) {
+	args := m.Called(ctx, date)
 	if args.Get(0) == nil {
 		return nil, args.Error(1)
 	}
-	return args.Get(0).(*schedule.ScheduleStatsResult), args.Error(1)
+	return args.Get(0).(*entity.ScheduleCounts), args.Error(1)
 }
 
 type mockScheduleTaskRepo struct {

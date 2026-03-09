@@ -11,12 +11,22 @@ func (s *Store) UpdateSchedule(_ context.Context, schedule *entity.Schedule) (*e
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
-	if _, ok := s.schedules[schedule.ID]; !ok {
+	old, ok := s.schedules[schedule.ID]
+	if !ok {
 		return nil, pkgerrors.ErrScheduleNotFound
 	}
 
+	s.statusCounts[old.Status]--
+	s.dateStatusCounts[old.Date][old.Status]--
+
 	stored := deepCopySchedule(schedule)
 	s.schedules[stored.ID] = stored
+
+	s.statusCounts[stored.Status]++
+	if _, ok := s.dateStatusCounts[stored.Date]; !ok {
+		s.dateStatusCounts[stored.Date] = make(map[string]int)
+	}
+	s.dateStatusCounts[stored.Date][stored.Status]++
 
 	return deepCopySchedule(stored), nil
 }

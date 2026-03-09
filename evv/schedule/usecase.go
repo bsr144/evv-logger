@@ -108,7 +108,7 @@ func (uc *scheduleUsecase) GetAll(ctx context.Context, dateFilter string) (*Sche
 func (uc *scheduleUsecase) Update(ctx context.Context, id int, req *UpdateScheduleRequest) (*ScheduleResponse, error) {
 	existing, err := uc.scheduleRepo.GetScheduleByID(ctx, id)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to get schedule %d: %w", id, err)
 	}
 
 	if req.Status != nil {
@@ -119,22 +119,28 @@ func (uc *scheduleUsecase) Update(ctx context.Context, id int, req *UpdateSchedu
 	}
 
 	if req.ClockInTime != nil {
-		existing.ClockInTime = req.ClockInTime
+		t := *req.ClockInTime
+		existing.ClockInTime = &t
 	}
 	if req.ClockInLat != nil {
-		existing.ClockInLat = req.ClockInLat
+		v := *req.ClockInLat
+		existing.ClockInLat = &v
 	}
 	if req.ClockInLng != nil {
-		existing.ClockInLng = req.ClockInLng
+		v := *req.ClockInLng
+		existing.ClockInLng = &v
 	}
 	if req.ClockOutTime != nil {
-		existing.ClockOutTime = req.ClockOutTime
+		t := *req.ClockOutTime
+		existing.ClockOutTime = &t
 	}
 	if req.ClockOutLat != nil {
-		existing.ClockOutLat = req.ClockOutLat
+		v := *req.ClockOutLat
+		existing.ClockOutLat = &v
 	}
 	if req.ClockOutLng != nil {
-		existing.ClockOutLng = req.ClockOutLng
+		v := *req.ClockOutLng
+		existing.ClockOutLng = &v
 	}
 
 	existing.UpdatedAt = time.Now()
@@ -148,16 +154,17 @@ func (uc *scheduleUsecase) Update(ctx context.Context, id int, req *UpdateSchedu
 }
 
 func (uc *scheduleUsecase) GetStats(ctx context.Context) (*StatsResponse, error) {
-	result, err := uc.scheduleRepo.GetScheduleStats(ctx)
+	today := time.Now().Format("2006-01-02")
+	counts, err := uc.scheduleRepo.GetScheduleCounts(ctx, today)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get schedule stats: %w", err)
 	}
 
 	return &StatsResponse{
-		Total:     result.Total,
-		Missed:    result.Missed,
-		Upcoming:  result.Upcoming,
-		Completed: result.Completed,
+		Total:     counts.Total,
+		Missed:    counts.StatusCounts["missed"],
+		Upcoming:  counts.DateStatusCounts["upcoming"],
+		Completed: counts.DateStatusCounts["completed"],
 	}, nil
 }
 
